@@ -8,5 +8,6 @@ edition = "2018"
 
 [dependencies]
 
+actix-rt = "0.2.5"
 actix-web = "1.0.5"
 

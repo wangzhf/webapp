@@ -38,5 +38,5 @@ fn main() {
 
 // 404 handler
 fn h404() -> impl Responder {
-    HttpResponse::NotFound().body("Not found")
+    model::APIResult::new(404, Box::new(None::<u32>), "Not found".to_string())
 }

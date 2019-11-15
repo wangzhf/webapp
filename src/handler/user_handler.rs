@@ -1,6 +1,9 @@
 use actix_web::Responder;
+use serde::Serialize;
+
 use crate::model;
 
+#[derive(Serialize)]
 struct Person {
     name: String,
     age: u32,

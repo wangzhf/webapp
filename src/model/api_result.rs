@@ -1,5 +1,6 @@
 use actix_web::{Responder, HttpRequest, Error, HttpResponse};
 use std::fmt::{Display, Formatter};
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct APIResult<T> {
@@ -8,9 +9,9 @@ pub struct APIResult<T> {
     message: String,
 }
 
-impl<T> APIResult<T> where T: Display {
+impl<T> APIResult<T> {
 
-    pub fn new<T>(code: u32, data: T, message: String) -> APIResult<T> {
+    pub fn new(code: u32, data: T, message: String) -> APIResult<T> {
         APIResult {
             code,
             data,
@@ -20,7 +21,7 @@ impl<T> APIResult<T> where T: Display {
 
 }
 
-impl<T> Responder for APIResult<T> where T: Display {
+impl<T> Responder for APIResult<T> where T: Serialize {
     type Error = Error;
     type Future = Result<HttpResponse, Error>;
 
@@ -35,8 +36,3 @@ impl<T> Responder for APIResult<T> where T: Display {
     }
 }
 
-impl<T> Display for APIResult<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
-
-    }
-}

@@ -1,12 +1,12 @@
-use actix_web::Responder;
-use serde::Serialize;
+use actix_web::{Responder, web};
+use serde::{Serialize, Deserialize};
 
-use crate::model;
+use crate::model::APIResult;
 
-#[derive(Serialize)]
-struct Person {
-    name: String,
-    age: u32,
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Person {
+    pub name: String,
+    pub age: u32,
 }
 
 pub fn index() -> impl Responder {
@@ -14,5 +14,10 @@ pub fn index() -> impl Responder {
         name: "hello".to_string(),
         age: 20,
     };
-    model::APIResult::new(200, Some(p), None::<String>)
+    APIResult::new(200, Some(p), None::<String>)
+}
+
+pub fn add(json: web::Json<Person>) -> impl Responder {
+    let p = json.into_inner();
+    APIResult::new(200, Some(p), None::<String>)
 }

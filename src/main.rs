@@ -1,4 +1,4 @@
-use actix_web::{web, App, HttpServer, Responder, HttpResponse, guard};
+use actix_web::{guard, web, App, HttpResponse, HttpServer, Responder};
 
 mod handler;
 mod model;
@@ -9,16 +9,12 @@ struct AppState {
 }
 
 fn main() {
-
     HttpServer::new(|| {
         App::new()
             .data(AppState {
-                app_name: "Webapp".to_string()
+                app_name: "Webapp".to_string(),
             })
-            .service(web::scope("/app")
-                .route("/", web::get().to(handler::index))
-            )
-
+            .service(web::scope("/app").route("/", web::get().to(handler::index)))
             .default_service(
                 web::resource("")
                     .route(web::get().to(h404))
@@ -26,17 +22,17 @@ fn main() {
                     .route(
                         web::route()
                             .guard(guard::Not(guard::Get()))
-                            .to(HttpResponse::MethodNotAllowed)
-                    )
+                            .to(HttpResponse::MethodNotAllowed),
+                    ),
             )
     })
-        .bind("127.0.0.1:8088")
-        .unwrap()
-        .run()
-        .unwrap();
+    .bind("127.0.0.1:8088")
+    .unwrap()
+    .run()
+    .unwrap();
 }
 
 // 404 handler
 fn h404() -> impl Responder {
-    model::APIResult::new(404, Box::new(None::<u32>), "Not found".to_string())
+    model::APIResult::new(404, None::<u32>, "Not found".to_string())
 }

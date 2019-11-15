@@ -4,12 +4,12 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize)]
 pub struct APIResult<T> {
     code: u32,
-    data: Box<Option<T>>,
+    data: Option<T>,
     message: String,
 }
 
 impl<T> APIResult<T> {
-    pub fn new(code: u32, data: Box<Option<T>>, message: String) -> APIResult<T> {
+    pub fn new(code: u32, data: Option<T>, message: String) -> APIResult<T> {
         APIResult {
             code,
             data,

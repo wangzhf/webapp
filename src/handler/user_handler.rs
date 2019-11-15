@@ -14,5 +14,5 @@ pub fn index() -> impl Responder {
         name: "hello".to_string(),
         age: 20,
     };
-    model::APIResult::new(200, Some(p), "success".to_string())
+    model::APIResult::new(200, Some(p), None::<String>)
 }

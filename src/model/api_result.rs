@@ -5,11 +5,11 @@ use serde::{Deserialize, Serialize};
 pub struct APIResult<T> {
     code: u32,
     data: Option<T>,
-    message: String,
+    message: Option<String>,
 }
 
 impl<T> APIResult<T> {
-    pub fn new(code: u32, data: Option<T>, message: String) -> APIResult<T> {
+    pub fn new(code: u32, data: Option<T>, message: Option<String>) -> APIResult<T> {
         APIResult {
             code,
             data,

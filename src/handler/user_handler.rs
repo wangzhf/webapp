@@ -1,5 +1,5 @@
-use actix_web::{Responder, web};
-use serde::{Serialize, Deserialize};
+use actix_web::{web, Responder};
+use serde::{Deserialize, Serialize};
 
 use crate::model::APIResult;
 

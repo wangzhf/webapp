@@ -1,9 +1,15 @@
 #[macro_use]
-extern crate actix_web;
+extern crate log;
 
-use actix_web::{guard, web, middleware, dev, http, App, HttpResponse, HttpServer, Responder, Result};
+use std::io::Write;
+
 use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
+use actix_web::{
+    dev, guard, http, middleware, web, App, HttpResponse, HttpServer, Responder, Result,
+};
+use chrono::Local;
 use listenfd::ListenFd;
+use log::LevelFilter;
 
 mod handler;
 mod model;
@@ -14,9 +20,9 @@ struct AppState {
 }
 
 fn main() {
+    common_logger::init(common_logger::Flag::Dev);
 
-    std::env::set_var("RUST_LOG", "actix_web=info");
-    env_logger::init();
+    info!("Starting the server");
 
     // auto-reloading
     // run: systemfd --no-pid -s http::8088 -- cargo watch -x run
@@ -32,18 +38,15 @@ fn main() {
             // 设置全局响应头
             .wrap(middleware::DefaultHeaders::new().header("x-version", "1.0"))
             // 指定错误处理
-            .wrap(
-                ErrorHandlers::new()
-                    .handler(http::StatusCode::INTERNAL_SERVER_ERROR, h500)
-            )
+            .wrap(ErrorHandlers::new().handler(http::StatusCode::INTERNAL_SERVER_ERROR, h500))
             // 业务映射
-            .service(web::scope("/app")
-                .service(web::scope("/user")
-                    .route("/", web::get().to(handler::index))
-                    .route("add", web::post().to(handler::user_add))
-                )
+            .service(
+                web::scope("/app").service(
+                    web::scope("/user")
+                        .route("/", web::get().to(handler::index))
+                        .route("add", web::post().to(handler::user_add)),
+                ),
             )
-
             .default_service(
                 web::resource("")
                     .route(web::get().to(h404))
@@ -74,7 +77,7 @@ fn h404() -> impl Responder {
 fn h500<B>(mut res: dev::ServiceResponse<B>) -> Result<ErrorHandlerResponse<B>> {
     res.response_mut().headers_mut().insert(
         http::header::CONTENT_TYPE,
-            http::HeaderValue::from_static("Error"),
+        http::HeaderValue::from_static("Error"),
     );
     Ok(ErrorHandlerResponse::Response(res))
 }

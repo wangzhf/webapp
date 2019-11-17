@@ -28,4 +28,5 @@ listenfd = "0.3.3"
 [workspace]
 members = [
     "common/logger",
+    "common/db",
 ]
